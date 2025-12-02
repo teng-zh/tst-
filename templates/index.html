@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文件分享站</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .upload-form {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .file-input {
+            margin: 10px 0;
+            padding: 10px;
+        }
+        .submit-btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .submit-btn:hover {
+            background-color: #45a049;
+        }
+        .files-link {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: #0066cc;
+            text-decoration: none;
+        }
+        .files-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>文件分享站</h1>
+        <div style="text-align: center; color: #666; margin-bottom: 20px;">
+            <p>别人可以通过以下地址访问：</p>
+            <p style="font-size: 18px; font-weight: bold; color: #0066cc;">http://{{ local_ip }}:5000</p>
+        </div>
+        <form class="upload-form" action="/upload" method="post" enctype="multipart/form-data">
+            <input type="file" name="file" class="file-input" required>
+            <br>
+            <input type="submit" value="上传文件" class="submit-btn">
+        </form>
+        <a href="/files" class="files-link">查看已上传文件</a>
+    </div>
+</body>
+</html>
