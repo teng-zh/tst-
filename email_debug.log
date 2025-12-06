@@ -1,0 +1,191 @@
+2025-12-05 23:31:29,175 [INFO] [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.3.75:5000
+2025-12-05 23:31:29,176 [INFO] [33mPress CTRL+C to quit[0m
+2025-12-05 23:31:29,177 [INFO]  * Restarting with stat
+2025-12-05 23:31:29,373 [WARNING]  * Debugger is active!
+2025-12-05 23:31:29,377 [INFO]  * Debugger PIN: 455-686-805
+2025-12-05 23:32:15,351 [INFO] [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.3.75:5000
+2025-12-05 23:32:15,352 [INFO] [33mPress CTRL+C to quit[0m
+2025-12-05 23:32:15,353 [INFO]  * Restarting with stat
+2025-12-05 23:32:15,535 [WARNING]  * Debugger is active!
+2025-12-05 23:32:15,540 [INFO]  * Debugger PIN: 455-686-805
+2025-12-05 23:32:28,027 [INFO] 192.168.3.75 - - [05/Dec/2025 23:32:28] "GET / HTTP/1.1" 200 -
+2025-12-05 23:32:28,196 [INFO] 192.168.3.75 - - [05/Dec/2025 23:32:28] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2025-12-05 23:32:42,611 [INFO] 192.168.3.75 - - [05/Dec/2025 23:32:42] "GET /share-file HTTP/1.1" 200 -
+2025-12-05 23:32:43,408 [INFO] 192.168.3.75 - - [05/Dec/2025 23:32:43] "GET / HTTP/1.1" 200 -
+2025-12-05 23:32:44,063 [INFO] 192.168.3.75 - - [05/Dec/2025 23:32:44] "GET /share-file HTTP/1.1" 200 -
+2025-12-05 23:32:44,945 [INFO] 192.168.3.75 - - [05/Dec/2025 23:32:44] "GET / HTTP/1.1" 200 -
+2025-12-05 23:32:45,592 [INFO] 192.168.3.75 - - [05/Dec/2025 23:32:45] "GET /share-file HTTP/1.1" 200 -
+2025-12-05 23:32:47,648 [INFO] 192.168.3.75 - - [05/Dec/2025 23:32:47] "GET / HTTP/1.1" 200 -
+2025-12-05 23:32:48,843 [INFO] 192.168.3.75 - - [05/Dec/2025 23:32:48] "GET /share-file HTTP/1.1" 200 -
+2025-12-05 23:32:49,983 [INFO] 192.168.3.75 - - [05/Dec/2025 23:32:49] "GET / HTTP/1.1" 200 -
+2025-12-05 23:32:51,735 [INFO] 192.168.3.75 - - [05/Dec/2025 23:32:51] "GET /share-file HTTP/1.1" 200 -
+2025-12-05 23:32:54,556 [INFO] 192.168.3.75 - - [05/Dec/2025 23:32:54] "GET /raw/58ec3334-99cc-453b-b7fb-abe95f76f6a5_CalcVoice2.14.exe HTTP/1.1" 200 -
+2025-12-05 23:33:01,349 [INFO] 192.168.3.75 - - [05/Dec/2025 23:33:01] "[32mPOST /workspace/create HTTP/1.1[0m" 302 -
+2025-12-05 23:33:01,369 [INFO] 192.168.3.75 - - [05/Dec/2025 23:33:01] "GET /workspace/451cd7d0-475c-46dd-be49-d33c008f454d HTTP/1.1" 200 -
+2025-12-05 23:33:34,957 [INFO] [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.3.75:5000
+2025-12-05 23:33:34,957 [INFO] [33mPress CTRL+C to quit[0m
+2025-12-05 23:33:34,959 [INFO]  * Restarting with stat
+2025-12-05 23:33:35,166 [WARNING]  * Debugger is active!
+2025-12-05 23:33:35,171 [INFO]  * Debugger PIN: 455-686-805
+2025-12-05 23:35:29,525 [INFO] [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.3.75:5000
+2025-12-05 23:35:29,525 [INFO] [33mPress CTRL+C to quit[0m
+2025-12-05 23:35:59,102 [INFO] [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.3.75:5000
+2025-12-05 23:35:59,103 [INFO] [33mPress CTRL+C to quit[0m
+2025-12-05 23:35:59,104 [INFO]  * Restarting with stat
+2025-12-05 23:35:59,279 [WARNING]  * Debugger is active!
+2025-12-05 23:35:59,284 [INFO]  * Debugger PIN: 455-686-805
+2025-12-05 23:38:20,583 [INFO]  * Detected change in 'D:\\subtitle\\app.py', reloading
+2025-12-05 23:38:20,615 [INFO]  * Restarting with stat
+2025-12-05 23:38:20,808 [WARNING]  * Debugger is active!
+2025-12-05 23:38:20,813 [INFO]  * Debugger PIN: 455-686-805
+2025-12-05 23:38:50,824 [INFO]  * Detected change in 'D:\\subtitle\\app.py', reloading
+2025-12-05 23:38:50,853 [INFO]  * Restarting with stat
+2025-12-05 23:38:51,030 [WARNING]  * Debugger is active!
+2025-12-05 23:38:51,035 [INFO]  * Debugger PIN: 455-686-805
+2025-12-05 23:40:10,544 [INFO] [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.3.75:5000
+2025-12-05 23:40:10,544 [INFO] [33mPress CTRL+C to quit[0m
+2025-12-05 23:40:10,545 [INFO]  * Restarting with stat
+2025-12-05 23:40:10,724 [WARNING]  * Debugger is active!
+2025-12-05 23:40:10,729 [INFO]  * Debugger PIN: 455-686-805
+2025-12-05 23:40:51,046 [INFO] [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.3.75:5000
+2025-12-05 23:40:51,046 [INFO] [33mPress CTRL+C to quit[0m
+2025-12-05 23:40:51,048 [INFO]  * Restarting with stat
+2025-12-05 23:40:51,226 [WARNING]  * Debugger is active!
+2025-12-05 23:40:51,231 [INFO]  * Debugger PIN: 455-686-805
+2025-12-05 23:42:15,092 [INFO] [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.3.75:5000
+2025-12-05 23:42:15,093 [INFO] [33mPress CTRL+C to quit[0m
+2025-12-05 23:42:15,094 [INFO]  * Restarting with stat
+2025-12-05 23:42:15,273 [WARNING]  * Debugger is active!
+2025-12-05 23:42:15,278 [INFO]  * Debugger PIN: 455-686-805
+2025-12-06 09:52:02,050 [INFO] [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.3.75:5000
+2025-12-06 09:52:02,050 [INFO] [33mPress CTRL+C to quit[0m
+2025-12-06 09:52:02,052 [INFO]  * Restarting with stat
+2025-12-06 09:52:02,227 [WARNING]  * Debugger is active!
+2025-12-06 09:52:02,232 [INFO]  * Debugger PIN: 455-686-805
+2025-12-06 10:03:10,946 [INFO] [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.3.75:5000
+2025-12-06 10:03:10,947 [INFO] [33mPress CTRL+C to quit[0m
+2025-12-06 10:03:10,948 [INFO]  * Restarting with stat
+2025-12-06 10:03:11,121 [WARNING]  * Debugger is active!
+2025-12-06 10:03:11,126 [INFO]  * Debugger PIN: 455-686-805
+2025-12-06 10:03:53,064 [INFO] [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.3.75:5000
+2025-12-06 10:03:53,065 [INFO] [33mPress CTRL+C to quit[0m
+2025-12-06 10:03:53,066 [INFO]  * Restarting with stat
+2025-12-06 10:03:53,242 [WARNING]  * Debugger is active!
+2025-12-06 10:03:53,247 [INFO]  * Debugger PIN: 455-686-805
+2025-12-06 10:11:57,704 [INFO] [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.3.75:5000
+2025-12-06 10:11:57,705 [INFO] [33mPress CTRL+C to quit[0m
+2025-12-06 10:11:57,706 [INFO]  * Restarting with stat
+2025-12-06 10:11:57,890 [WARNING]  * Debugger is active!
+2025-12-06 10:11:57,896 [INFO]  * Debugger PIN: 455-686-805
+2025-12-06 10:14:00,828 [INFO] [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.3.75:5000
+2025-12-06 10:14:00,828 [INFO] [33mPress CTRL+C to quit[0m
+2025-12-06 10:14:00,829 [INFO]  * Restarting with stat
+2025-12-06 10:14:01,001 [WARNING]  * Debugger is active!
+2025-12-06 10:14:01,005 [INFO]  * Debugger PIN: 455-686-805
+2025-12-06 10:15:50,636 [INFO]  * Detected change in 'D:\\subtitle\\app.py', reloading
+2025-12-06 10:15:50,668 [INFO]  * Restarting with stat
+2025-12-06 10:15:50,861 [WARNING]  * Debugger is active!
+2025-12-06 10:15:50,866 [INFO]  * Debugger PIN: 455-686-805
+2025-12-06 10:15:52,077 [INFO]  * Detected change in 'D:\\subtitle\\app.py', reloading
+2025-12-06 10:15:52,108 [INFO]  * Restarting with stat
+2025-12-06 10:15:52,320 [WARNING]  * Debugger is active!
+2025-12-06 10:15:52,324 [INFO]  * Debugger PIN: 455-686-805
+2025-12-06 10:16:02,003 [INFO]  * Detected change in 'D:\\subtitle\\app.py', reloading
+2025-12-06 10:16:02,031 [INFO]  * Restarting with stat
+2025-12-06 10:16:02,219 [WARNING]  * Debugger is active!
+2025-12-06 10:16:02,224 [INFO]  * Debugger PIN: 455-686-805
+2025-12-06 10:16:03,244 [INFO]  * Detected change in 'D:\\subtitle\\app.py', reloading
+2025-12-06 10:16:03,277 [INFO]  * Restarting with stat
+2025-12-06 10:16:03,470 [WARNING]  * Debugger is active!
+2025-12-06 10:16:03,475 [INFO]  * Debugger PIN: 455-686-805
+2025-12-06 10:16:23,225 [INFO]  * Detected change in 'D:\\subtitle\\app.py', reloading
+2025-12-06 10:16:23,255 [INFO]  * Restarting with stat
+2025-12-06 10:16:23,455 [WARNING]  * Debugger is active!
+2025-12-06 10:16:23,460 [INFO]  * Debugger PIN: 455-686-805
+2025-12-06 10:16:23,917 [INFO]  * Detected change in 'D:\\subtitle\\app.py', reloading
+2025-12-06 10:16:23,949 [INFO]  * Restarting with stat
+2025-12-06 10:16:24,139 [WARNING]  * Debugger is active!
+2025-12-06 10:16:24,144 [INFO]  * Debugger PIN: 455-686-805
+2025-12-06 10:16:36,961 [INFO]  * Detected change in 'D:\\subtitle\\app.py', reloading
+2025-12-06 10:16:36,989 [INFO]  * Restarting with stat
+2025-12-06 10:16:37,187 [WARNING]  * Debugger is active!
+2025-12-06 10:16:37,192 [INFO]  * Debugger PIN: 455-686-805
+2025-12-06 10:16:37,392 [INFO]  * Detected change in 'D:\\subtitle\\app.py', reloading
+2025-12-06 10:16:37,419 [INFO]  * Restarting with stat
+2025-12-06 10:16:37,612 [WARNING]  * Debugger is active!
+2025-12-06 10:16:37,616 [INFO]  * Debugger PIN: 455-686-805
+2025-12-06 10:16:58,196 [INFO]  * Detected change in 'D:\\subtitle\\app.py', reloading
+2025-12-06 10:16:58,224 [INFO]  * Restarting with stat
+2025-12-06 10:16:58,406 [WARNING]  * Debugger is active!
+2025-12-06 10:16:58,410 [INFO]  * Debugger PIN: 455-686-805
+2025-12-06 10:16:58,707 [INFO]  * Detected change in 'D:\\subtitle\\app.py', reloading
+2025-12-06 10:16:58,737 [INFO]  * Restarting with stat
+2025-12-06 10:16:58,912 [WARNING]  * Debugger is active!
+2025-12-06 10:16:58,917 [INFO]  * Debugger PIN: 455-686-805
+2025-12-06 10:17:40,416 [INFO]  * Detected change in 'D:\\subtitle\\app.py', reloading
+2025-12-06 10:17:40,446 [INFO]  * Restarting with stat
+2025-12-06 10:17:40,631 [WARNING]  * Debugger is active!
+2025-12-06 10:17:40,637 [INFO]  * Debugger PIN: 455-686-805
+2025-12-06 10:21:48,271 [INFO] [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.3.75:5000
+2025-12-06 10:21:48,272 [INFO] [33mPress CTRL+C to quit[0m
+2025-12-06 10:21:48,273 [INFO]  * Restarting with stat
+2025-12-06 10:21:48,450 [WARNING]  * Debugger is active!
+2025-12-06 10:21:48,454 [INFO]  * Debugger PIN: 455-686-805
+2025-12-06 10:23:21,855 [INFO]  * Detected change in 'D:\\subtitle\\app.py', reloading
+2025-12-06 10:23:21,884 [INFO]  * Restarting with stat
+2025-12-06 10:23:22,064 [WARNING]  * Debugger is active!
+2025-12-06 10:23:22,068 [INFO]  * Debugger PIN: 455-686-805
+2025-12-06 10:23:38,397 [INFO]  * Detected change in 'D:\\subtitle\\app.py', reloading
+2025-12-06 10:23:38,426 [INFO]  * Restarting with stat
+2025-12-06 10:23:38,614 [WARNING]  * Debugger is active!
+2025-12-06 10:23:38,619 [INFO]  * Debugger PIN: 455-686-805
+2025-12-06 10:24:52,934 [INFO] [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.3.75:5000
+2025-12-06 10:24:52,935 [INFO] [33mPress CTRL+C to quit[0m
+2025-12-06 10:24:52,936 [INFO]  * Restarting with stat
+2025-12-06 10:24:53,108 [WARNING]  * Debugger is active!
+2025-12-06 10:24:53,113 [INFO]  * Debugger PIN: 455-686-805

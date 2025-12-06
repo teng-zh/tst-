@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML预览器 - 广场</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            background-color: #333;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        h1 {
+            margin: 0;
+            font-size: 2.5em;
+        }
+        .nav {
+            background-color: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+        .nav a {
+            text-decoration: none;
+            color: #0066cc;
+            font-weight: bold;
+        }
+        .nav a:hover {
+            text-decoration: underline;
+        }
+        .square-header {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .square-header h2 {
+            margin-top: 0;
+            color: #333;
+        }
+        .workspaces-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .workspace-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            padding: 20px;
+            transition: transform 0.3s;
+        }
+        .workspace-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        }
+        .workspace-card h2 {
+            margin-top: 0;
+            color: #333;
+        }
+        .workspace-info {
+            color: #666;
+            font-size: 0.9em;
+            margin: 10px 0;
+        }
+        .workspace-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 14px;
+            display: inline-block;
+        }
+        .btn-primary {
+            background-color: #0066cc;
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #0052a3;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 50px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>HTML预览器</h1>
+    </header>
+    
+    <div class="container">
+        <div class="nav">
+            <div class="nav-links">
+                <a href="/">我的工作区</a>
+                <a href="/square">广场</a>
+                <a href="/share-file">文件分享</a>
+            </div>
+        </div>
+        
+        <div class="square-header">
+            <h2>广场</h2>
+            <p>查看所有用户的工作区</p>
+        </div>
+        
+        {% if workspaces %}
+            <div class="workspaces-grid">
+                {% for workspace in workspaces %}
+                    <div class="workspace-card">
+                        <h2>{{ workspace.name }}</h2>
+                        <div class="workspace-info">
+                            创建者: {{ workspace.user_id }}<br>
+                            创建时间: {{ workspace.created_at | datetimeformat }}
+                        </div>
+                        <div class="workspace-actions">
+                            <a href="/workspace/{{ workspace.id }}" class="btn btn-primary">查看</a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <h2>广场上还没有工作区</h2>
+                <p>成为第一个创建工作区的用户吧！</p>
+                <a href="/" class="btn btn-primary">去创建</a>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>

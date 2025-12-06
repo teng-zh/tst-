@@ -3,88 +3,353 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>已上传文件</title>
+    <title>文件分享 - HTML预览器</title>
     <style>
+        /* Reset and Base Styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
         body {
-            font-family: Arial, sans-serif;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #f0f0f0;
-        }
-        .container {
-            background-color: white;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-        h1 {
-            text-align: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
             color: #333;
         }
-        .back-link {
-            display: inline-block;
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            color: #333;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            margin: 0;
+            font-size: 2.5em;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        h2, h3 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+        
+        /* Navigation */
+        .nav {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
             margin-bottom: 20px;
-            color: #0066cc;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .nav a {
             text-decoration: none;
+            color: #667eea;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
         }
-        .back-link:hover {
-            text-decoration: underline;
+        
+        .nav a:hover {
+            background-color: rgba(102, 126, 234, 0.1);
+            text-decoration: none;
+            transform: translateY(-2px);
         }
+        
+        /* Upload Section */
+        .upload-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        
+        .upload-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .upload-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .upload-option {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            border: 2px dashed #dee2e6;
+            transition: all 0.3s ease;
+        }
+        
+        .upload-option:hover {
+            border-color: #667eea;
+            background-color: rgba(102, 126, 234, 0.05);
+        }
+        
+        .upload-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .upload-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        /* Files Section */
+        .files-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        }
+        
         .file-list {
             list-style-type: none;
             padding: 0;
+            margin-top: 20px;
         }
+        
         .file-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 15px;
-            border-bottom: 1px solid #eee;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
         }
-        .file-item:last-child {
-            border-bottom: none;
+        
+        .file-item:hover {
+            background: rgba(102, 126, 234, 0.05);
+            transform: translateX(5px);
         }
+        
         .file-name {
-            font-weight: bold;
+            font-weight: 600;
             color: #333;
+            flex: 1;
         }
-        .download-btn {
-            background-color: #0066cc;
-            color: white;
+        
+        .btn-group {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .btn {
             padding: 8px 16px;
             border: none;
-            border-radius: 4px;
+            border-radius: 6px;
             cursor: pointer;
             text-decoration: none;
             font-size: 14px;
+            font-weight: 500;
+            display: inline-block;
+            transition: all 0.3s ease;
         }
+        
+        .preview-btn {
+            background-color: #17a2b8;
+            color: white;
+        }
+        
+        .preview-btn:hover {
+            background-color: #138496;
+            transform: translateY(-1px);
+        }
+        
+        .raw-btn {
+            background-color: #6c757d;
+            color: white;
+        }
+        
+        .raw-btn:hover {
+            background-color: #5a6268;
+            transform: translateY(-1px);
+        }
+        
+        .download-btn {
+            background-color: #28a745;
+            color: white;
+        }
+        
         .download-btn:hover {
-            background-color: #0052a3;
+            background-color: #218838;
+            transform: translateY(-1px);
         }
+        
+        .delete-btn {
+            background-color: #dc3545;
+            color: white;
+        }
+        
+        .delete-btn:hover {
+            background-color: #c82333;
+            transform: translateY(-1px);
+        }
+        
         .empty-message {
             text-align: center;
-            color: #666;
-            padding: 20px;
+            color: #6c757d;
+            padding: 40px 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        
+        /* User Info */
+        .user-info {
+            display: flex;
+            align-items: center;
+        }
+        
+        .user-info span {
+            margin-right: 15px;
+            color: #667eea;
+            font-weight: 600;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            .nav {
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
+            }
+            
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .upload-options {
+                grid-template-columns: 1fr;
+            }
+            
+            .file-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .btn-group {
+                width: 100%;
+                justify-content: flex-start;
+                flex-wrap: wrap;
+            }
         }
     </style>
 </head>
 <body>
+    <header>
+        <h1>HTML预览器</h1>
+    </header>
+    
     <div class="container">
-        <h1>已上传文件</h1>
-        <a href="/" class="back-link">← 返回上传页面</a>
-        <ul class="file-list">
-            {% if files %}
-                {% for file in files %}
-                    <li class="file-item">
-                        <span class="file-name">{{ file.split('_', 1)[1] }}</span>
-                        <a href="/download/{{ file }}" class="download-btn">下载</a>
+        <div class="nav">
+            <div class="nav-links">
+                <a href="/">我的工作区</a>
+                <a href="/square">广场</a>
+                <a href="/share-file">文件分享</a>
+            </div>
+            <div class="user-info">
+                <span>欢迎, {{ user }}</span>
+                <a href="/logout" class="btn">注销</a>
+            </div>
+        </div>
+        
+        <div class="upload-section">
+            <h2>📁 文件上传</h2>
+            <form action="/upload" method="post" enctype="multipart/form-data" class="upload-form">
+                <div class="upload-options">
+                    <div class="upload-option">
+                        <h3>选择文件</h3>
+                        <input type="file" name="file" multiple required>
+                        <button type="submit" class="upload-btn">上传文件</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        
+        <div class="files-section">
+            <h2>📂 已上传文件</h2>
+            
+            <ul class="file-list">
+                {% if files %}
+                    {% for file in files %}
+                        <li class="file-item">
+                            <span class="file-name">{{ file.split('_', 1)[1] }}</span>
+                            <div class="btn-group">
+                                <a href="/preview/{{ file }}" class="btn preview-btn">预览</a>
+                                <a href="/raw/{{ file }}" class="btn raw-btn">RAW</a>
+                                <a href="/download/{{ file }}" class="btn download-btn">下载</a>
+                                {% if metadata and file in metadata and metadata[file]['creator_username'] == user %}
+                                    <a href="/delete/{{ file }}" class="btn delete-btn" onclick="return confirm('确定要删除这个文件吗？');">删除</a>
+                                {% endif %}
+                            </div>
+                        </li>
+                    {% endfor %}
+                {% else %}
+                    <li class="empty-message">
+                        <h3>暂无上传的文件</h3>
+                        <p>点击上方上传按钮开始上传文件</p>
                     </li>
-                {% endfor %}
-            {% else %}
-                <li class="empty-message">暂无上传的文件</li>
-            {% endif %}
-        </ul>
+                {% endif %}
+            </ul>
+        </div>
     </div>
 </body>
 </html>

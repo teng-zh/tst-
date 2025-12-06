@@ -1,12 +1,13 @@
-from flask import Flask, render_template, request, redirect, url_for, send_from_directory, abort, jsonify
+from flask import Flask, render_template, request, redirect, url_for, send_from_directory, abort, jsonify, session, g
 from flask_mail import Mail, Message
-from datetime import datetime
+from datetime import datetime, timedelta
 import os
 import uuid
 import socket
 import json
 import logging
 import time
+import hashlib
 from logging.handlers import RotatingFileHandler
 
 # 配置日志
@@ -21,11 +22,18 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
+
+# 会话配置
+app.secret_key = 'your-secret-key-change-this-in-production'  # 用于加密会话数据
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=30)  # 会话有效期30天
+
+# 文件配置
 app.config['UPLOAD_FOLDER'] = 'uploads'
 app.config['WORKSPACES_DIR'] = 'workspaces'
 app.config['MAX_CONTENT_LENGTH'] = 100 * 1024 * 1024  # 100MB max file size
 app.config['FILE_METADATA'] = 'file_metadata.json'
 app.config['WORKSPACES_METADATA'] = 'workspaces_metadata.json'
+app.config['USERS_METADATA'] = 'users_metadata.json'
 
 # 添加模板过滤器
 @app.template_filter('datetimeformat')
@@ -66,6 +74,88 @@ if not os.path.exists(app.config['FILE_METADATA']):
 if not os.path.exists(app.config['WORKSPACES_METADATA']):
     with open(app.config['WORKSPACES_METADATA'], 'w') as f:
         json.dump({}, f)
+
+if not os.path.exists(app.config['USERS_METADATA']):
+    with open(app.config['USERS_METADATA'], 'w') as f:
+        json.dump({}, f)
+
+# 用户系统相关函数
+
+def hash_password(password):
+    """密码哈希函数"""
+    return hashlib.sha256(password.encode()).hexdigest()
+
+# Get or create users metadata
+def get_users_metadata():
+    with open(app.config['USERS_METADATA'], 'r') as f:
+        return json.load(f)
+
+# Save users metadata
+def save_users_metadata(metadata):
+    with open(app.config['USERS_METADATA'], 'w') as f:
+        json.dump(metadata, f, indent=2)
+
+# Check if username exists
+def username_exists(username):
+    metadata = get_users_metadata()
+    return username in metadata
+
+# Check if email exists
+def email_exists(email):
+    metadata = get_users_metadata()
+    for user_data in metadata.values():
+        if user_data.get('email') == email:
+            return True
+    return False
+
+# Create a new user
+def create_user(username, password, email):
+    metadata = get_users_metadata()
+    user_id = str(uuid.uuid4())
+    metadata[username] = {
+        'id': user_id,
+        'password_hash': hash_password(password),
+        'email': email,
+        'created_at': time.time(),
+        'ip_address': request.remote_addr
+    }
+    save_users_metadata(metadata)
+    return user_id
+
+# Authenticate user
+def authenticate_user(username, password):
+    metadata = get_users_metadata()
+    if username not in metadata:
+        return None
+    user_data = metadata[username]
+    if user_data['password_hash'] == hash_password(password):
+        return user_data
+    return None
+
+# Get user by username
+def get_user_by_username(username):
+    metadata = get_users_metadata()
+    return metadata.get(username)
+
+# Get user by user_id
+def get_user_by_id(user_id):
+    metadata = get_users_metadata()
+    for user_data in metadata.values():
+        if user_data['id'] == user_id:
+            return user_data
+    return None
+
+# 更新工作区元数据，将IP用户ID替换为实际用户ID
+# 先获取当前工作区元数据，然后更新user_id字段，改为使用username作为user_id
+# 这样可以兼容现有工作区
+
+# 认证中间件
+@app.before_request
+def load_current_user():
+    """在每个请求前加载当前用户"""
+    g.user = None
+    if 'username' in session:
+        g.user = get_user_by_username(session['username'])
 
 # Get or create file metadata
 def get_file_metadata():
@@ -193,13 +283,16 @@ def delete_workspace(workspace_id):
         return True
     return False
 
-# Get files in workspace
+# Get files in workspace with tree structure
 def get_workspace_files(workspace_id):
     workspace_path = get_workspace_path(workspace_id)
     if not os.path.exists(workspace_path):
-        return []
+        return [], {}
     
     files = []
+    # Build file tree structure
+    file_tree = {}
+    
     for root, dirs, filenames in os.walk(workspace_path):
         for filename in filenames:
             file_path = os.path.join(root, filename)
@@ -211,28 +304,128 @@ def get_workspace_files(workspace_id):
                 'modified_at': os.path.getmtime(file_path),
                 'is_html': filename.lower().endswith('.html')
             })
-    return files
+    
+    # Build directory structure
+    directory_tree = {}
+    for file in files:
+        path_parts = file['path'].split(os.sep)
+        current = directory_tree
+        
+        # Create directories in the tree
+        for i in range(len(path_parts) - 1):
+            part = path_parts[i]
+            if part not in current:
+                current[part] = {'type': 'dir', 'children': {}}
+            current = current[part]['children']
+        
+        # Add file to the tree
+        current[path_parts[-1]] = {'type': 'file', 'file_data': file}
+    
+    return files, directory_tree
+
+# Recursive function to render directory tree as HTML
+@app.context_processor
+def utility_processor():
+    def render_tree(tree, workspace_id):
+        html = '<ul class="file-tree">'
+        for name, item in sorted(tree.items()):
+            if item['type'] == 'dir':
+                html += f'<li class="dir-item"><span class="dir-name">📁 {name}</span>'
+                html += render_tree(item['children'], workspace_id)
+                html += '</li>'
+            else:
+                file = item['file_data']
+                html += f'<li class="file-item"><a href="/workspace/{workspace_id}/preview/{file["path"]}" target="_blank" class="file-name">📄 {name}</a></li>'
+        html += '</ul>'
+        return html
+    return {'render_tree': render_tree}
+
+# 用户认证路由
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    error = None
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        user_data = authenticate_user(username, password)
+        if user_data:
+            # 登录成功，设置会话
+            session['username'] = username
+            session['user_id'] = user_data['id']
+            session.permanent = True
+            return redirect(url_for('index'))
+        else:
+            error = '用户名或密码错误'
+    return render_template('login.html', error=error)
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    error = None
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        confirm_password = request.form['confirm_password']
+        email = request.form['email']
+        
+        # 验证输入
+        if len(username) < 3:
+            error = '用户名至少需要3个字符'
+        elif len(password) < 6:
+            error = '密码至少需要6个字符'
+        elif password != confirm_password:
+            error = '两次输入的密码不一致'
+        elif username_exists(username):
+            error = '用户名已存在'
+        elif email_exists(email):
+            error = '邮箱已被注册'
+        else:
+            # 创建用户
+            create_user(username, password, email)
+            return redirect(url_for('login'))
+    return render_template('register.html', error=error)
+
+@app.route('/logout')
+def logout():
+    # 清除会话
+    session.clear()
+    return redirect(url_for('login'))
+
+# 受保护的路由装饰器
+def login_required(f):
+    """路由保护装饰器，只有登录用户才能访问"""
+    from functools import wraps
+    
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'username' not in session:
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return decorated_function
 
 @app.route('/')
+@login_required
 def index():
-    # Use client IP as user ID for simplicity
-    user_id = request.remote_addr
+    # 使用登录用户名作为用户ID
+    username = session['username']
+    user = get_user_by_username(username)
     
     # Get user workspaces
-    workspaces = get_user_workspaces(user_id)
+    workspaces = get_user_workspaces(username)
     
     # Render workspace management page
-    return render_template('workspaces.html', workspaces=workspaces, user_id=user_id)
+    return render_template('workspaces.html', workspaces=workspaces, user=user)
 
 @app.route('/workspaces')
+@login_required
 def workspaces():
     # Redirect to home page which now shows workspaces
     return redirect(url_for('index'))
 
 @app.route('/workspace/create', methods=['POST'])
+@login_required
 def create_workspace_route():
     # Create a new workspace
-    user_id = request.remote_addr
+    username = session['username']  # 使用登录用户名作为用户ID
     workspace_name = request.form.get('name', 'Untitled')
     custom_route = request.form.get('custom_route', '').strip()
     
@@ -245,11 +438,12 @@ def create_workspace_route():
     workspace_id = str(uuid.uuid4())
     
     # Create workspace
-    create_workspace(workspace_id, workspace_name, user_id, custom_route)
+    create_workspace(workspace_id, workspace_name, username, custom_route)
     
     return redirect(url_for('workspace_detail', workspace_id=workspace_id))
 
 @app.route('/workspace/<workspace_id>')
+@login_required
 def workspace_detail(workspace_id):
     # Show workspace details and files
     if not workspace_exists(workspace_id):
@@ -261,16 +455,29 @@ def workspace_detail(workspace_id):
     if not workspace:
         abort(404)
     
-    # Get workspace files
-    files = get_workspace_files(workspace_id)
+    # Check access permission: only workspace owner can access
+    username = session['username']
+    if workspace['user_id'] != username:
+        return "<h1>403 Forbidden</h1><p>Only the workspace owner can access this workspace.</p>", 403
     
-    return render_template('workspace_detail.html', workspace=workspace, workspace_id=workspace_id, files=files)
+    # Get workspace files with tree structure
+    files, directory_tree = get_workspace_files(workspace_id)
+    
+    return render_template('workspace_detail.html', workspace=workspace, workspace_id=workspace_id, files=files, directory_tree=directory_tree)
 
 @app.route('/workspace/<workspace_id>/upload', methods=['POST'])
+@login_required
 def upload_to_workspace(workspace_id):
     # Upload files to workspace
     if not workspace_exists(workspace_id):
         abort(404)
+    
+    # Check if user is the owner
+    username = session['username']
+    metadata = get_workspaces_metadata()
+    workspace = metadata.get(workspace_id)
+    if not workspace or workspace['user_id'] != username:
+        return "<h1>403 Forbidden</h1><p>Only the workspace owner can upload files.</p>", 403
     
     if 'file' not in request.files:
         return redirect(url_for('workspace_detail', workspace_id=workspace_id))
@@ -311,10 +518,18 @@ def upload_to_workspace(workspace_id):
     return redirect(url_for('workspace_detail', workspace_id=workspace_id))
 
 @app.route('/workspace/<workspace_id>/preview/<path:file_path>')
+@login_required
 def preview_workspace_file(workspace_id, file_path):
     # Preview a file in workspace
     if not workspace_exists(workspace_id):
         abort(404)
+    
+    # Check if user is the owner
+    username = session['username']
+    metadata = get_workspaces_metadata()
+    workspace = metadata.get(workspace_id)
+    if not workspace or workspace['user_id'] != username:
+        return "<h1>403 Forbidden</h1><p>Only the workspace owner can preview files.</p>", 403
     
     # Get full file path
     full_path = os.path.join(get_workspace_path(workspace_id), file_path)
@@ -336,7 +551,7 @@ def preview_workspace_file(workspace_id, file_path):
 def custom_route_handler(custom_route):
     # Handle custom workspace routes
     # Skip reserved routes
-    reserved_routes = ['workspaces', 'workspace', 'square', 'share-file', 'upload', 'download', 'send-mail', 'email', 'preview', 'raw', 'delete', '1', '2', '3', '5']
+    reserved_routes = ['workspaces', 'workspace', 'square', 'share-file', 'upload', 'download', 'send-mail', 'email', 'preview', 'raw', 'delete', '1', '2', '3', '5', 'login', 'register', 'logout']
     if custom_route in reserved_routes:
         abort(404)
     
@@ -349,61 +564,113 @@ def custom_route_handler(custom_route):
     abort(404)
 
 @app.route('/square')
+@login_required
 def square():
     # Show all workspaces (square)
     all_workspaces = get_all_workspaces()
     return render_template('square.html', workspaces=all_workspaces)
 
+@app.route('/workspace/<workspace_id>/delete-file', methods=['POST'])
+@login_required
+def delete_workspace_file(workspace_id):
+    # Check if workspace exists
+    if not workspace_exists(workspace_id):
+        abort(404)
+    
+    # Check if user is the owner
+    username = session['username']
+    metadata = get_workspaces_metadata()
+    workspace = metadata.get(workspace_id)
+    if not workspace or workspace['user_id'] != username:
+        return "<h1>403 Forbidden</h1><p>You don't have permission to delete files in this workspace.</p>", 403
+    
+    # Get file path
+    file_path = request.form.get('file_path')
+    if not file_path:
+        abort(400)
+    
+    # Delete file
+    full_file_path = os.path.join(get_workspace_path(workspace_id), file_path)
+    if os.path.exists(full_file_path):
+        os.remove(full_file_path)
+        
+    # Update workspace updated_at time
+    metadata = get_workspaces_metadata()
+    if workspace_id in metadata:
+        metadata[workspace_id]['updated_at'] = time.time()
+        save_workspaces_metadata(metadata)
+    
+    return redirect(url_for('workspace_detail', workspace_id=workspace_id))
+
+@app.route('/workspace/delete/<workspace_id>', methods=['POST'])
+@login_required
+def delete_workspace_route(workspace_id):
+    # Check if workspace exists
+    if not workspace_exists(workspace_id):
+        abort(404)
+    
+    # Check if user is the owner
+    username = session['username']
+    metadata = get_workspaces_metadata()
+    if metadata[workspace_id]['user_id'] != username:
+        return "<h1>403 Forbidden</h1><p>You don't have permission to delete this workspace.</p>", 403
+    
+    # Delete workspace
+    if delete_workspace(workspace_id):
+        return redirect(url_for('index'))
+    else:
+        abort(500)
+
 @app.route('/share-file')
+@login_required
 def share_file():
-    # Keep the original file sharing functionality
+    # Show file sharing page with upload form
     files = os.listdir(app.config['UPLOAD_FOLDER'])
     files.sort(key=lambda x: os.path.getmtime(os.path.join(app.config['UPLOAD_FOLDER'], x)), reverse=True)
-    return render_template('files.html', files=files)
-
-@app.route('/upload', methods=['POST'])
-def upload_file():
-    if 'file' not in request.files:
-        return redirect(url_for('index'))
-    
-    # 获取所有上传的文件，包括文件夹中的文件
-    files = request.files.getlist('file')
-    
-    if not files or all(f.filename == '' for f in files):
-        return redirect(url_for('index'))
-    
-    # Get client IP
-    client_ip = request.remote_addr
-    
-    # Save file metadata
     metadata = get_file_metadata()
-    
-    for file in files:
-        if file.filename != '':
-            # 生成唯一文件名，避免冲突
-            filename = str(uuid.uuid4()) + '_' + file.filename
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            
-            # 保存文件元数据，包含创建者IP
-            metadata[filename] = {
-                'creator_ip': client_ip,
-                'upload_time': os.path.getmtime(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            }
-    
-    save_file_metadata(metadata)
-    return redirect(url_for('files'))
+    return render_template('files.html', files=files, metadata=metadata, user=session['username'])
+
+@app.route('/upload', methods=['GET', 'POST'])
+@login_required
+def upload_file():
+    if request.method == 'POST':
+        if 'file' not in request.files:
+            return redirect(url_for('share-file'))
+        
+        # 获取所有上传的文件，包括文件夹中的文件
+        files = request.files.getlist('file')
+        
+        if not files or all(f.filename == '' for f in files):
+            return redirect(url_for('share-file'))
+        
+        # Get current user
+        username = session['username']
+        
+        # Save file metadata
+        metadata = get_file_metadata()
+        
+        for file in files:
+            if file.filename != '':
+                # 生成唯一文件名，避免冲突
+                filename = str(uuid.uuid4()) + '_' + file.filename
+                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                
+                # 保存文件元数据，包含创建者用户名
+                metadata[filename] = {
+                    'creator_username': username,
+                    'upload_time': os.path.getmtime(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                }
+        
+        save_file_metadata(metadata)
+        return redirect(url_for('share-file'))
+    else:
+        return redirect(url_for('share-file'))
 
 @app.route('/files')
+@login_required
 def files():
-    # Get list of files in upload folder
-    files = os.listdir(app.config['UPLOAD_FOLDER'])
-    # Sort files by modification time (newest first)
-    files.sort(key=lambda x: os.path.getmtime(os.path.join(app.config['UPLOAD_FOLDER'], x)), reverse=True)
-    # Get metadata
-    metadata = get_file_metadata()
-    # Get client IP for delete permission check
-    client_ip = request.remote_addr
-    return render_template('files.html', files=files, metadata=metadata, client_ip=client_ip)
+    # Redirect to share-file page
+    return redirect(url_for('share-file'))
 
 def get_file_url(filename):
     """获取文件的URL，支持CDN"""
@@ -652,6 +919,7 @@ def raw_file(filename):
     return f"<html><head><meta name=\"color-scheme\" content=\"light dark\"></head><body><pre style=\"word-wrap: break-word; white-space: pre-wrap;\">{file_content}</pre></body></html>"
 
 @app.route('/delete/<filename>')
+@login_required
 def delete_file(filename):
     # Check if file exists
     file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
@@ -660,16 +928,16 @@ def delete_file(filename):
     
     # Get metadata
     metadata = get_file_metadata()
-    client_ip = request.remote_addr
+    username = session['username']
     
-    # Check if client is the creator (same IP)
-    if filename in metadata and metadata[filename]['creator_ip'] == client_ip:
+    # Check if client is the creator (same username)
+    if filename in metadata and metadata[filename].get('creator_username') == username:
         # Delete file
         os.remove(file_path)
         # Remove from metadata
         del metadata[filename]
         save_file_metadata(metadata)
-        return redirect(url_for('files'))
+        return redirect(url_for('share-file'))
     else:
         # Permission denied
         return "<h1>403 Forbidden</h1><p>You don't have permission to delete this file.</p>", 403

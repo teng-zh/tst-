@@ -1,0 +1,1 @@
+echo "Upload check successful"
