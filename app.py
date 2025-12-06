@@ -365,25 +365,33 @@ def share_file():
 def upload_file():
     if 'file' not in request.files:
         return redirect(url_for('index'))
-    file = request.files['file']
-    if file.filename == '':
+    
+    # 获取所有上传的文件，包括文件夹中的文件
+    files = request.files.getlist('file')
+    
+    if not files or all(f.filename == '' for f in files):
         return redirect(url_for('index'))
-    if file:
-        # Get client IP
-        client_ip = request.remote_addr
-        # Generate unique filename to avoid conflicts
-        filename = str(uuid.uuid4()) + '_' + file.filename
-        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-        
-        # Save file metadata with creator IP
-        metadata = get_file_metadata()
-        metadata[filename] = {
-            'creator_ip': client_ip,
-            'upload_time': os.path.getmtime(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-        }
-        save_file_metadata(metadata)
-        
-        return redirect(url_for('files'))
+    
+    # Get client IP
+    client_ip = request.remote_addr
+    
+    # Save file metadata
+    metadata = get_file_metadata()
+    
+    for file in files:
+        if file.filename != '':
+            # 生成唯一文件名，避免冲突
+            filename = str(uuid.uuid4()) + '_' + file.filename
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            
+            # 保存文件元数据，包含创建者IP
+            metadata[filename] = {
+                'creator_ip': client_ip,
+                'upload_time': os.path.getmtime(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            }
+    
+    save_file_metadata(metadata)
+    return redirect(url_for('files'))
 
 @app.route('/files')
 def files():

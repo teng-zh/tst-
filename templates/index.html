@@ -57,15 +57,21 @@
 <body>
     <div class="container">
         <h1>文件分享站</h1>
-        <div style="text-align: center; color: #666; margin-bottom: 20px;">
-            <p>别人可以通过以下地址访问：</p>
-            <p style="font-size: 18px; font-weight: bold; color: #0066cc;">http://{{ local_ip }}:5000</p>
+        <div style="display: flex; justify-content: center; gap: 20px; margin-bottom: 20px;">
+            <form class="upload-form" action="/upload" method="post" enctype="multipart/form-data" style="flex: 1; max-width: 400px;">
+                <h3>上传单个或多个文件</h3>
+                <input type="file" name="file" class="file-input" multiple required>
+                <br>
+                <input type="submit" value="上传文件" class="submit-btn">
+            </form>
+            
+            <form class="upload-form" action="/upload" method="post" enctype="multipart/form-data" style="flex: 1; max-width: 400px;">
+                <h3>上传文件夹</h3>
+                <input type="file" name="file" class="file-input" webkitdirectory directory required>
+                <br>
+                <input type="submit" value="上传文件夹" class="submit-btn">
+            </form>
         </div>
-        <form class="upload-form" action="/upload" method="post" enctype="multipart/form-data">
-            <input type="file" name="file" class="file-input" required>
-            <br>
-            <input type="submit" value="上传文件" class="submit-btn">
-        </form>
         <a href="/files" class="files-link">查看已上传文件</a>
     </div>
 </body>
