@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文件预览</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #0066cc;
+            text-decoration: none;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        .file-info {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f8f8f8;
+            border-radius: 4px;
+        }
+        .file-name {
+            font-weight: bold;
+            font-size: 18px;
+            color: #333;
+        }
+        .preview-area {
+            margin: 20px 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            border-radius: 4px;
+            overflow: auto;
+        }
+        pre {
+            background-color: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 4px;
+            overflow: auto;
+            font-family: 'Courier New', Courier, monospace;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        img, video {
+            max-width: 100%;
+            height: auto;
+            border-radius: 4px;
+        }
+        audio {
+            width: 100%;
+            margin: 20px 0;
+        }
+        .raw-btn {
+            background-color: #6c757d;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 14px;
+            margin: 10px 0;
+            display: inline-block;
+        }
+        .raw-btn:hover {
+            background-color: #5a6268;
+        }
+        .error-message {
+            color: #dc3545;
+            text-align: center;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>文件预览</h1>
+        <a href="/files" class="back-link">← 返回文件列表</a>
+        
+        <div class="file-info">
+            <div class="file-name">{{ file_name }}</div>
+        </div>
+        
+        <div class="preview-area">
+            {% if preview_type == 'text' %}
+                <pre>{{ file_content }}</pre>
+                <a href="/raw/{{ file }}" class="raw-btn">查看原始文件</a>
+            {% elif preview_type == 'image' %}
+                <img src="{{ file_url }}" alt="{{ file_name }}">
+            {% elif preview_type == 'video' %}
+                <video controls>
+                    <source src="{{ file_url }}" type="video/mp4">
+                    您的浏览器不支持视频播放
+                </video>
+            {% elif preview_type == 'audio' %}
+                <audio controls>
+                    <source src="{{ file_url }}" type="audio/mpeg">
+                    您的浏览器不支持音频播放
+                </audio>
+            {% else %}
+                <div class="error-message">
+                    <p>暂不支持此文件类型的预览</p>
+                    <a href="{{ file_url }}" class="download-btn">直接下载</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
